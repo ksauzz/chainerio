@@ -98,27 +98,19 @@ def set_root(uri_or_handler: Union[str, Type['IO']]) -> None:
     Example::
 
         # Case 1
-        # set_root by the name of uri
-        chainerio.set_root("posix")
-        # open a file on posix filesystem with path "some/file"
-        chainerio.open("some/file")
-        # override with a uri
-        chainerio.open("hdfs:///some/file/on/hdfs")
-
-        # Case 2
         # set_root by uri
         chainerio.set_root("hdfs:///some/directory")
         # open a file "on/hdfs" on hdfs under the " some/directory"
         chainerio.open("on/hdfs")
 
-        # Case 3
+        # Case 2
         handler = chainerio.create_handler('hdfs')
         # set_root by handler
         chainerio.set_root(handler)
         # open a file "/some/file/on/hdfs" on hdfs
         chainerio.open("/some/file/on/hdfs")
 
-        # Case 4
+        # Case 3
         handler = chainerio.open_as_container('some.zip')
         # set_root by handler
         chainerio.set_root(handler)
@@ -153,15 +145,11 @@ def set_root(uri_or_handler: Union[str, Type['IO']]) -> None:
             :class:`chainerio.IO`): The ``uri_or_handler``
             can accept the following three kinds of values:
 
-            1. the scheme (string): set the default handler
-                according to the scheme.
-                See :func:`create_handler` for supported scheme.
-
-            2. an uri of directory (string): set the context
+            1. an uri of directory (string): set the context
                 to use the corresponding handler and set
                 the root path to the given directory.
 
-            3. a handler, which is an instance of
+            2. a handler, which is an instance of
                 :class:`chainerio.IO`. Set the default handler
                 to the given handler, and root path to default.
 

@@ -18,19 +18,8 @@ class FileSystemDriverList(object):
         self.pattern_list = {"hdfs": self.hdfs_pattern,
                              "posix": self.posix_pattern, }
 
-    def _determine_fs_type(self, path: str) -> Tuple[str, str, bool]:
-        if None is not path:
-            for fs_type, pattern in self.pattern_list.items():
-                ret = pattern.match(path)
-                if ret:
-                    return (fs_type, ret.groupdict()["path"], True)
-
-        return ("posix", path, False)
-
-    def format_path(self, fs: IO, path: str) -> Tuple[str, bool]:
-        fs_type = fs.type
-        if fs_type in self.pattern_list.keys():
-            pattern = self.pattern_list[fs_type]
+    def format_path(self, path: str) -> Tuple[str, str, bool]:
+        for fs_type, pattern in self.pattern_list.items():
             ret = pattern.match(path)
             if ret:
                 return (ret.groupdict()["path"], True)

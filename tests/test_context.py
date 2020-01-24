@@ -22,7 +22,7 @@ class TestContext(unittest.TestCase):
 
     def test_set_root(self):
         # Set default context globally in this process
-        chainerio.set_root('posix')
+        root = chainerio.get_root_dir()
 
         # Using the context to open local file
         with chainerio.open(self.tmpfile_path, "r") as fp:
@@ -32,9 +32,10 @@ class TestContext(unittest.TestCase):
         with chainerio.open(self.tmpfile_name, "r") as fp:
             self.assertEqual(fp.read(), self.test_string_str)
 
+        chainerio.set_root(root)
+
     def test_open_as_container(self):
         # Create a container for testing
-        chainerio.set_root("posix")
         zip_file_name = "test"
         zip_file_path = zip_file_name + ".zip"
 
@@ -120,6 +121,7 @@ class TestContext(unittest.TestCase):
         chainerio.remove(hdfs_file_path)
 
     def test_root_local_override(self):
+        root = chainerio.get_root_dir()
         chainerio.set_root('file://' + self.tmpdir.name)
         with chainerio.open(self.tmpfile_name, "r") as fp:
             self.assertEqual(fp.read(), self.test_string_str)
@@ -129,6 +131,8 @@ class TestContext(unittest.TestCase):
             with chainerio.open('file://' + __file__) as fp:
                 self.assertEqual(fp.read(), my_script.read().encode("utf-8"))
 
+        chainerio.set_root(root)
+
     # override with different filesystem
     @unittest.skipIf(shutil.which('hdfs') is None, "HDFS client not installed")
     def test_root_fs_override(self):
@@ -136,6 +140,8 @@ class TestContext(unittest.TestCase):
 
         hdfs_tmpfile = "tmpfile_hdfs"
         hdfs_file_string = "this is a test string for hdfs"
+
+        chainerio.set_root(chainerio.create_handler("hdfs"))
 
         conn = hdfs.connect()
         with conn.open(hdfs_tmpfile, "wb") as f:
@@ -155,6 +161,8 @@ class TestContext(unittest.TestCase):
 
         conn.delete(hdfs_tmpfile)
         conn.close()
+
+        chainerio.set_root(chainerio.create_handler("posix"))
 
     def test_create_handler(self):
         posix_handler = chainerio.create_handler("posix")
